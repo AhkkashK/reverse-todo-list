@@ -35,13 +35,22 @@ jobs:
     - name: Run tests (Frontend)
       working-directory: ./frontend
       run: npm test
- 
- 
+      
+    - name: Install Selenium WebDriver and ChromeDriver
+      run: |
+         npm install selenium-webdriver chromedriver
+
+    - name: Start the Application
+      run: |
+        cd frontend
+        npm run start &
+        sleep 10  
+    
     - name: Run end-to-end tests
       working-directory: ./e2e-tests
       run: |
         npm install
-        npm test
+        npx mocha test.js
  
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
@@ -57,7 +66,13 @@ jobs:
         password: ${{ secrets.DOCKER_PASSWORD }}
  
         
-    - name: Build and Push Docker Image
+    - name: Build and Push Docker Images
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
       run: |
-        docker-compose -f docker-compose.yml build
-        docker-compose -f docker-compose.yml push
+        echo $DOCKER_PASSWORD | docker login -u $DOCKER_USERNAME --password-stdin
+        docker build -t $DOCKER_USERNAME/backend ./backend
+        docker build -t $DOCKER_USERNAME/frontend ./frontend
+        docker push $DOCKER_USERNAME/backend
+        docker push $DOCKER_USERNAME/frontend
