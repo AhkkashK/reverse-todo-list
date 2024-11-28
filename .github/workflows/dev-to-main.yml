@@ -41,7 +41,6 @@ jobs:
       run: |
         git fetch origin
         git checkout main
-        git reset --hard origin/main
         git config --global user.email "ahkkash.kandasamy@efrei.net"
         git config --global user.name "Ahkkash"
         git merge origin/dev --no-ff --no-edit --allow-unrelated-histories
