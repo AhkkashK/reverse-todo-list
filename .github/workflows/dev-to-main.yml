@@ -39,23 +39,22 @@ jobs:
       run: npm test
  
     - name: Merge dev into main (if tests pass)
-      if: success()  # Only run this if all previous steps were successful
+      if: success()  
       run: |
-        # Fetch the latest changes from the remote repository
+        # Récupérer les derniers changements du dépôt distant
         git fetch origin
         
-        # Checkout the main branch
+        # Se placer sur la branche main
         git checkout main
         
-        # Ensure main is up-to-date with the latest remote changes
-        git pull origin main --allow-unrelated-histories
+        # Réinitialiser main pour qu'elle corresponde à la version distante de main
+        git reset --hard origin/main
         
-        # Merge the dev branch into main
-        git merge origin/dev --no-ff --no-edit
+        # Fusionner dev dans main, autoriser la fusion même avec des historiques non liés
+        git merge origin/dev --no-ff --no-edit --allow-unrelated-histories
         
-        # Push the changes to the remote main branch
+        # Pousser les changements sur la branche main du dépôt distant
         git push origin main
- 
       env:
-        # Use GitHub token for authentication
+        
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
