@@ -48,7 +48,7 @@ jobs:
         git checkout main
         
         # Ensure main is up-to-date with the latest remote changes
-        git pull origin main
+        git pull origin main --allow-unrelated-histories
         
         # Merge the dev branch into main
         git merge origin/dev --no-ff --no-edit
