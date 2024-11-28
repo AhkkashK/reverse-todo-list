@@ -41,19 +41,10 @@ jobs:
     - name: Merge dev into main (if tests pass)
       if: success()  
       run: |
-        # Récupérer les derniers changements du dépôt distant
         git fetch origin
-        
-        # Se placer sur la branche main
         git checkout main
-        
-        # Réinitialiser main pour qu'elle corresponde à la version distante de main
         git reset --hard origin/main
-        
-        # Fusionner dev dans main, autoriser la fusion même avec des historiques non liés
         git merge origin/dev --no-ff --no-edit --allow-unrelated-histories
-        
-        # Pousser les changements sur la branche main du dépôt distant
         git push origin main
       env:
         
