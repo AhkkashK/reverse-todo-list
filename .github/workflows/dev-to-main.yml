@@ -39,7 +39,7 @@ jobs:
       run: npm test
  
     - name: Merge dev into main (if tests pass)
-      uses: devmasx/merge-branch@master
+      uses: uses: devmasx/merge-branch@1.4.0
           with:
             type: now
             from_branch: dev
