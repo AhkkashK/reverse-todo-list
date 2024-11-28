@@ -1,0 +1,61 @@
+name: Node.js CI
+ 
+on:
+  push:
+    branches: [ "dev" ]
+  pull_request:
+    branches: [ "dev" ]
+ 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+ 
+    strategy:
+      matrix:
+        node-version: [18.x]
+ 
+    steps:
+    - uses: actions/checkout@v3
+ 
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+ 
+    - name: Install dependencies (Backend)
+      working-directory: ./backend
+      run: npm install
+      
+    - name: Run tests (Backend)
+      working-directory: ./backend
+      run: npm test
+ 
+    - name: Install dependencies (Frontend)
+      working-directory: ./frontend
+      run: npm install
+    
+    - name: Run tests (Frontend)
+      working-directory: ./frontend
+      run: npm test
+ 
+    - name: Merge dev into main (if tests pass)
+      if: success()  # Only run this if all previous steps were successful
+      run: |
+        # Fetch the latest changes from the remote repository
+        git fetch origin
+        
+        # Checkout the main branch
+        git checkout main
+        
+        # Ensure main is up-to-date with the latest remote changes
+        git pull origin main
+        
+        # Merge the dev branch into main
+        git merge origin/dev --no-ff --no-edit
+        
+        # Push the changes to the remote main branch
+        git push origin main
+ 
+      env:
+        # Use GitHub token for authentication
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
